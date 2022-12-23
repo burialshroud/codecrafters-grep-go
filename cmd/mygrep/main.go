@@ -34,6 +34,17 @@ func main() {
 		if strings.IndexAny(input, "0123456789") != -1 {
 			os.Exit(0)
 		}
+	} else if len(pattern) == 2 &&
+	pattern[0] == '\\' && pattern[1] == 'w' {
+		for i := range(input) {
+			ch := input[i]
+			if (ch >= 'A' && ch <= 'Z') ||
+			(ch >= 'a' && ch <= 'z') ||
+			(ch >= '0' && ch <= '9') ||
+			(ch == '_') {
+				os.Exit(0)
+			}
+		}
 	} else {
 		eprintf("unsupported pattern\n")
 		os.Exit(3)
