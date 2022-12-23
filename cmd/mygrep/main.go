@@ -1,19 +1,15 @@
 package main
 
 import (
-	// Uncomment this to pass the first stage
-	// "bytes"
 	"fmt"
 	"io"
 	"os"
 	"strings"
-	"unicode/utf8"
 )
 
 func eprintf(format string, a ...interface{}) {
 	fmt.Fprintf(os.Stderr, format, a...);
 }
-
 
 // Usage: echo <input_text> | your_grep.sh -E <pattern>
 func main() {
