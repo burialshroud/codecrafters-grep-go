@@ -18,20 +18,22 @@ func main() {
 		os.Exit(2)
 	}
 
-	pattern := os.Args[2]
-	if len(pattern) != 1 {
-		eprintf("unsupported pattern len\n")
-		os.Exit(3)
-	}
-
 	input_bytes, err := io.ReadAll(os.Stdin)
 	if err != nil {
 		eprintf("can't read from stdin: %v\n", err)
 	}
 
 	input := string(input_bytes)
-	if strings.IndexByte(input, pattern[0]) != -1 {
+	pattern := os.Args[2]
+	if len(pattern) == 1
+	&& strings.IndexByte(input, pattern[0]) != -1 {
 		os.Exit(0)
+	} else if len(pattern) == 2 {
+	&& strings.IndexAny(input, "0123456789") != -1 {
+		os.Exit(0)
+	} else {
+		eprintf("unsupported pattern\n")
+		os.Exit(3)
 	}
 	os.Exit(1)
 }
