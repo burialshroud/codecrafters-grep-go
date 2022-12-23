@@ -25,11 +25,9 @@ func main() {
 
 	input := string(input_bytes)
 	pattern := os.Args[2]
-	if len(pattern) == 1 
-	&& strings.IndexByte(input, pattern[0]) != -1 {
+	if len(pattern) == 1 && strings.IndexByte(input, pattern[0]) != -1 {
 		os.Exit(0)
-	} else if len(pattern) == 2
-	&& strings.IndexAny(input, "0123456789") != -1 {
+	} else if len(pattern) == 2 && strings.IndexAny(input, "0123456789") != -1 {
 		os.Exit(0)
 	} else {
 		eprintf("unsupported pattern\n")
