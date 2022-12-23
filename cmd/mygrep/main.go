@@ -45,6 +45,12 @@ func main() {
 				os.Exit(0)
 			}
 		}
+	} else if len(pattern) > 3 &&
+	pattern[0] == '[' && pattern[len(pattern)-1] == ']' {
+		accept := pattern[1:len(pattern)-1]
+		if strings.IndexAny(input, accept) != -1 {
+			os.Exit(0)
+		}
 	} else {
 		eprintf("unsupported pattern\n")
 		os.Exit(3)
