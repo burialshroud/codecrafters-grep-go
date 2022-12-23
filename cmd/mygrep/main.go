@@ -48,7 +48,7 @@ func main() {
 
 	} else if len(pattern) > 3 &&
 		pattern[0] == '[' && pattern[len(pattern)-1] == ']' {
-		if pattern[0] == '^' {
+		if pattern[1] == '^' {
 			reject := pattern[2:len(pattern)-1]
 			for i := range input {
 				ch := input[i]
