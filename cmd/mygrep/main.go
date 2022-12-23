@@ -14,6 +14,7 @@ func eprintf(format string, a ...interface{}) {
 	fmt.Fprintf(os.Stderr, format, a...);
 }
 
+
 // Usage: echo <input_text> | your_grep.sh -E <pattern>
 func main() {
 	if len(os.Args) < 3 || os.Args[1] != "-E" {
