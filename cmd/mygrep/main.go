@@ -12,8 +12,8 @@ func eprintf(format string, a ...interface{}) {
 }
 
 struct Group {
-	chars string
-	inverted bool
+	chars string,
+	inverted bool,
 }
 
 func groupMatches(Group g, byte ch) {
