@@ -32,7 +32,7 @@ func parseGroups(pattern string) ([]Group, string) {
 	in_backslash := false
 	in_group_start := false
 	in_group := false
-	for i := pattern {
+	for i := range pattern {
 		ch := pattern[i]
 		if in_backslash {
 			if ch == 'd' {
