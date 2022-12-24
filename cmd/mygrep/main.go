@@ -16,7 +16,7 @@ type Group struct {
 	inverted bool
 }
 
-func groupMatches(g Group, ch byte) {
+func groupMatches(g Group, ch byte) bool {
 	idx := strings.IndexByte(g.chars, ch)
 	if g.inverted {
 		return idx == -1
@@ -65,7 +65,7 @@ func parseGroups(pattern string) ([]Group, string) {
 				cur_group.inverted = true
 				in_group_start = false
 			} else {
-				cur_group.chars += ch;
+				cur_group.chars += string(ch);
 				if !in_group {
 					groups = append(groups, cur_group)
 					cur_group = Group{"", true}
