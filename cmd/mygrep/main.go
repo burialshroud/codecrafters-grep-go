@@ -90,7 +90,7 @@ func main() {
 
 	pattern := os.Args[2]
 	groups, errstr := parseGroups(pattern)
-	if errstr != "" {
+	if errstr != "" || len(groups) < 1 {
 		eprintf("can't parse pattern: %s\n", errstr)
 		os.Exit(3)
 	}
