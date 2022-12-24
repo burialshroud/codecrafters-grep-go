@@ -27,7 +27,7 @@ func groupMatches(g Group, ch byte) bool {
 
 func parseGroups(pattern string) ([]Group, string) {
 	groups := make([]Group, 0, 16)
-	cur_group := Group{"", true}
+	cur_group := Group{"", false}
 	in_backslash := false
 	in_group_start := false
 	in_group := false
@@ -43,7 +43,7 @@ func parseGroups(pattern string) ([]Group, string) {
 			}
 			if !in_group {
 				groups = append(groups, cur_group)
-				cur_group = Group{"", true}
+				cur_group = Group{"", false}
 			} else {
 				in_group_start = false
 			}
@@ -60,7 +60,7 @@ func parseGroups(pattern string) ([]Group, string) {
 				}
 				in_group = false
 				groups = append(groups, cur_group)
-				cur_group = Group{"", true}
+				cur_group = Group{"", false}
 			} else if in_group_start && ch == '^' {
 				cur_group.inverted = true
 				in_group_start = false
@@ -68,7 +68,7 @@ func parseGroups(pattern string) ([]Group, string) {
 				cur_group.chars += string(ch);
 				if !in_group {
 					groups = append(groups, cur_group)
-					cur_group = Group{"", true}
+					cur_group = Group{"", false}
 				} else {
 					in_group_start = false
 				}
