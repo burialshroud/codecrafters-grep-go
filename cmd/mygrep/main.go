@@ -94,6 +94,7 @@ func main() {
 		eprintf("can't parse pattern: %s\n", errstr)
 		os.Exit(3)
 	}
+	eprintf("groups: %v\n", groups)
 
 	input_bytes, err := io.ReadAll(os.Stdin)
 	if err != nil {
