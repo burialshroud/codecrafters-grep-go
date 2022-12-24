@@ -107,7 +107,7 @@ func main() {
 		os.Exit(1)
 	}
 	input_max := len(input) - len(groups)
-	outer: for i := 0; i < input_max; i++ {
+	outer: for i := 0; i <= input_max; i++ {
 		for j := range groups {
 			if !groupMatches(groups[j], input[i+j]) {
 				continue outer;
