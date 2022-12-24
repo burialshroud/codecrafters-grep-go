@@ -17,7 +17,7 @@ type Group struct {
 }
 
 func groupMatches(g Group, ch byte) {
-	idx := strings.IndexOfByte(g.chars, ch)
+	idx := strings.IndexByte(g.chars, ch)
 	if g.inverted {
 		return idx == -1
 	} else {
@@ -26,7 +26,6 @@ func groupMatches(g Group, ch byte) {
 }
 
 func parseGroups(pattern string) ([]Group, string) {
-	pattern_len := len(pattern)
 	groups := make([]Group, 0, 16)
 	cur_group := Group{"", true}
 	in_backslash := false
@@ -40,7 +39,7 @@ func parseGroups(pattern string) ([]Group, string) {
 			} else if ch == 'w' {
 				cur_group.chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
 			} else {
-				cur_group.chars += ch;
+				cur_group.chars += string(ch);
 			}
 			if !in_group {
 				groups = append(groups, cur_group)
