@@ -36,11 +36,11 @@ func parseGroups(pattern string) ([]Group, string) {
 		ch := pattern[i]
 		if in_backslash {
 			if ch == 'd' {
-				cur_group.str += "0123456789"
+				cur_group.chars += "0123456789"
 			} else if ch == 'w' {
-				cur_group.str += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
+				cur_group.chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
 			} else {
-				cur_group.str += ch;
+				cur_group.chars += ch;
 			}
 			if !in_group {
 				groups = append(groups, cur_group)
@@ -66,7 +66,7 @@ func parseGroups(pattern string) ([]Group, string) {
 				cur_group.inverted = true
 				in_group_start = false
 			} else {
-				cur_group.str += ch;
+				cur_group.chars += ch;
 				if !in_group {
 					groups = append(groups, cur_group)
 					cur_group = Group{"", true}
