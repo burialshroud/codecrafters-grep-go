@@ -11,6 +11,77 @@ func eprintf(format string, a ...interface{}) {
 	fmt.Fprintf(os.Stderr, format, a...)
 }
 
+struct Group {
+	chars string
+	inverted bool
+}
+
+func groupMatches(Group g, byte ch) {
+	idx := strings.IndexOfByte(g.chars, ch)
+	if g.inverted {
+		return idx == -1
+	} else {
+		return idx != -1
+	}
+}
+
+func parseGroups(pattern string) ([]Group, string) {
+	pattern_len := len(pattern)
+	groups := make([]Group, 0, 16)
+	cur_group := Group{"", true}
+	in_backslash := false
+	in_group_start := false
+	in_group := false
+	for i := pattern {
+		ch := pattern[i]
+		if in_backslash {
+			if ch == 'd' {
+				cur_group.str += "0123456789"
+			} else if ch == 'w' {
+				cur_group.str += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
+			} else {
+				cur_group.str += ch;
+			}
+			if !in_group {
+				groups = append(groups, cur_group)
+				cur_group = Group{"", true}
+			} else {
+				in_group_start = false
+			}
+		} else {
+			if ch == '[' {
+				if in_group {
+					return nil, "can't have nested character groups"
+				}
+				in_group = true
+				in_group_start = true
+			} else if in_group && ch == ']' {
+				if in_group_start {
+					return nil, "empty character group is invalid"
+				}
+				in_group = false
+				groups = append(groups, cur_group)
+				cur_group = Group{"", true}
+			} else if in_group_start && ch == '^' {
+				cur_group.inverted = true
+				in_group_start = false
+			} else {
+				cur_group.str += ch;
+				if !in_group {
+					groups = append(groups, cur_group)
+					cur_group = Group{"", true}
+				} else {
+					in_group_start = false
+				}
+			}
+		}
+	}
+	if in_group {
+		return nil, "unterminated group"
+	}
+	return groups, ""
+}
+
 // Usage: echo <input_text> | your_grep.sh -E <pattern>
 func main() {
 	if len(os.Args) < 3 || os.Args[1] != "-E" {
@@ -18,53 +89,31 @@ func main() {
 		os.Exit(2)
 	}
 
+	pattern := os.Args[2]
+	groups, errstr := parseGroups(pattern)
+	if errstr != "" {
+		eprintf("can't parse pattern: %s\n", errstr)
+		os.Exit(3)
+	}
+
 	input_bytes, err := io.ReadAll(os.Stdin)
 	if err != nil {
 		eprintf("can't read from stdin: %v\n", err)
+		os.Exit(4)
 	}
 
 	input := string(input_bytes)
-	pattern := os.Args[2]
-	if len(pattern) == 1 {
-		if strings.IndexByte(input, pattern[0]) != -1 {
-			os.Exit(0)
-		}
-	} else if len(pattern) == 2 &&
-		pattern[0] == '\\' && pattern[1] == 'd' {
-		if strings.IndexAny(input, "0123456789") != -1 {
-			os.Exit(0)
-		}
-	} else if len(pattern) == 2 &&
-		pattern[0] == '\\' && pattern[1] == 'w' {
-		for i := range input {
-			ch := input[i]
-			if (ch >= 'A' && ch <= 'Z') ||
-				(ch >= 'a' && ch <= 'z') ||
-				(ch >= '0' && ch <= '9') ||
-				(ch == '_') {
-				os.Exit(0)
+	if len(input) < len(groups) {
+		os.Exit(1)
+	}
+	input_max := len(input) - len(groups)
+	outer: for i := 0; i < input_max; i++ {
+		for j := range groups {
+			if !groupMatches(groups[j], input[i+j]) {
+				continue outer;
 			}
 		}
-
-	} else if len(pattern) > 3 &&
-		pattern[0] == '[' && pattern[len(pattern)-1] == ']' {
-		if pattern[1] == '^' {
-			reject := pattern[2:len(pattern)-1]
-			for i := range input {
-				ch := input[i]
-				if !strings.ContainsRune(reject, rune(ch)) {
-					os.Exit(0)
-				}
-			}
-		} else {
-			accept := pattern[1:len(pattern)-1]
-			if strings.IndexAny(input, accept) != -1 {
-				os.Exit(0)
-			}
-		}
-	} else {
-		eprintf("unsupported pattern\n")
-		os.Exit(3)
+		os.Exit(0)
 	}
 	os.Exit(1)
 }
