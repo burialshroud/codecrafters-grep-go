@@ -16,7 +16,7 @@ type Group struct {
 	inverted bool
 }
 
-func groupMatches(Group g, byte ch) {
+func groupMatches(g Group, ch byte) {
 	idx := strings.IndexOfByte(g.chars, ch)
 	if g.inverted {
 		return idx == -1
