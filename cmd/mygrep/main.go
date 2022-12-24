@@ -47,31 +47,31 @@ func parseGroups(pattern string) ([]Group, string) {
 			} else {
 				in_group_start = false
 			}
+		} else if ch == '\\' {
+			in_backslash = true
+		} else if ch == '[' {
+			if in_group {
+				return nil, "can't have nested character groups"
+			}
+			in_group = true
+			in_group_start = true
+		} else if in_group && ch == ']' {
+			if in_group_start {
+				return nil, "empty character group is invalid"
+			}
+			in_group = false
+			groups = append(groups, cur_group)
+			cur_group = Group{"", false}
+		} else if in_group_start && ch == '^' {
+			cur_group.inverted = true
+			in_group_start = false
 		} else {
-			if ch == '[' {
-				if in_group {
-					return nil, "can't have nested character groups"
-				}
-				in_group = true
-				in_group_start = true
-			} else if in_group && ch == ']' {
-				if in_group_start {
-					return nil, "empty character group is invalid"
-				}
-				in_group = false
+			cur_group.chars += string(ch);
+			if !in_group {
 				groups = append(groups, cur_group)
 				cur_group = Group{"", false}
-			} else if in_group_start && ch == '^' {
-				cur_group.inverted = true
-				in_group_start = false
 			} else {
-				cur_group.chars += string(ch);
-				if !in_group {
-					groups = append(groups, cur_group)
-					cur_group = Group{"", false}
-				} else {
-					in_group_start = false
-				}
+				in_group_start = false
 			}
 		}
 	}
