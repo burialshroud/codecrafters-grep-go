@@ -47,6 +47,7 @@ func parseGroups(pattern string) ([]Group, string) {
 			} else {
 				in_group_start = false
 			}
+			in_backslash = false
 		} else if ch == '\\' {
 			in_backslash = true
 		} else if ch == '[' {
